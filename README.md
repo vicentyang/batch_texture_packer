@@ -4,6 +4,7 @@
 
 -----------------------------------
 
+
 ### Environment
 
 * Texuture Command Line
@@ -24,5 +25,7 @@
 
   * 使用的是TexturePacker的命令行，有新的想法就是直接使用[gka](https://github.com/gkajs/gka) 有时间再折腾
 
-## 发布
-  * electron-packager /Users/vicent/Sites/vicent_beta/batch_texture_packer batch_texture_packer --overwrite to force
+## 发布桌面 app
+  ```
+  electron-packager /Users/vicent/Sites/vicent_beta/batch_texture_packer batch_texture_packer --overwrite to force
+  ```
