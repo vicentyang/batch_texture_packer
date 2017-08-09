@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <style type="text/css">
+        ul,
+        button {
+            cursor: pointer;
+        }
+
+        li:hover {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <select id="typeList">
+      <option value ="1">JSON</option>
+      <option value ="2">XML</option>
+      <option value="3">EGRET_JSON</option>
+    </select>
+    <div id="assetsFolder" style="width:500px;height:150px;margin-right:auto;margin-left:auto;background:#ccc;border:2px solid;text-align:center;line-height:150px;">
+        Drag your AssetsFolder file here
+    </div>
+    <div id="desFolder" style="margin-top:20px;margin-right:auto;margin-left:auto;width:500px;height:150px;background:#ccc;border:2px solid;text-align:center;line-height:150px;">
+        Drag your DesFolder here
+    </div>
+
+    <center><button id='mainBtn' style="margin-top:20px;margin-right:auto;margin-left:auto;">奔跑吧，皮卡丘</button></center>
+    <button  onclick="clearHistory()">clear</button>
+    <ul id="historyTb">
+    </ul>
+</body>
+
+</html>
+<script type="text/javascript" src="./initAssets.js"></script>
+
+
+<script>
+    const assetsFolder = document.getElementById('assetsFolder');
+    const desFolder = document.getElementById('desFolder');
+    const mainBtn = document.getElementById('mainBtn');
+    const historyTb = document.getElementById('historyTb');
+    initHistoryTb();
+    desFolder.ondragover = assetsFolder.ondragover = () => {
+        return false;
+    };
+
+    desFolder.ondragend = desFolder.ondragleave = assetsFolder.ondragleave = assetsFolder.ondragend = () => {
+        return false;
+    };
+
+    function clearHistory() {
+        historyTb.innerHTML = '';
+        localStorage.removeItem('texturePackerHistory')
+
+    }
+
+    assetsFolder.ondrop = (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+
+        root_path = file.path;
+        // console.log('File you dragged here is', getAllFiles(file.path));
+        console.log('File you dragged here is', root_path);
+
+        // readDirs(root_path);
+
+        assetsFolder.innerHTML = assetsPath = root_path;
+        return false;
+    };
+
+    historyTb.onclick = function(e) {
+        e.target.innerText
+        var pathData = e.target.innerText.split('--');
+        assetsFolder.innerHTML = assetsPath = pathData[0];
+        desFolder.innerHTML = targetPath = pathData[1];
+        // console.log('anim_preview.html>>>45', e.target.innerText);
+    };
+
+
+    desFolder.ondrop = (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+
+        root_path = file.path;
+        // console.log('File you dragged here is', getAllFiles(file.path));
+        console.log('File you dragged here is', root_path);
+
+        // readDirs(root_path);
+
+        desFolder.innerHTML = targetPath = root_path;
+        return false;
+    };
+
+    mainBtn.onclick = () => {
+
+        guiExec = true;
+        readDirs(assetsPath, typeList.value);
+
+        setLocalStorage(`${assetsPath}--${targetPath}`);
+    };
+
+    function initHistoryTb() {
+        var historyData = localStorage.getItem('texturePackerHistory');
+        if (!historyData) {
+            return false;
+        }
+        var historyList = JSON.parse(historyData);
+        if (historyList['historyList'] instanceof Array) {
+            for (var i = 0; i < historyList['historyList'].length; i++) {
+                appendHistoryLi(historyList['historyList'][i]);
+            }
+        }
+
+    }
+
+    function appendHistoryLi(_pathItem) {
+        var li = document.createElement('li');
+        historyTb.appendChild(li);
+        li.innerHTML = _pathItem;
+    }
+
+    function setLocalStorage(_path) {
+        var animPreviewHistory = localStorage.getItem('texturePackerHistory');
+        var historyList;
+        if (!animPreviewHistory) {
+            historyList = {
+                'historyList': []
+            }
+        } else {
+
+            historyList = JSON.parse(animPreviewHistory);
+        }
+        if (historyList['historyList'].indexOf(_path) !== -1) {
+            return;
+        }
+        historyList['historyList'].push(_path)
+        localStorage.setItem('texturePackerHistory', JSON.stringify(historyList));
+
+        appendHistoryLi(_path);
+
+    }
+
+</script>
